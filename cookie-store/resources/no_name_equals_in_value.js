@@ -16,7 +16,15 @@ cookie_test(async t => {
     new TypeError(),
     cookieStore.set('', 'suspicious-value=resembles-name-and-value'),
     'Expected promise rejection when setting a cookie with' +
-      ' no name and "=" in value');
+      ' no name and "=" in value (via arguments)');
+
+  await promise_rejects(
+    t,
+    new TypeError(),
+    cookieStore.set(
+      {name: '', value: 'suspicious-value=resembles-name-and-value'}),
+    'Expected promise rejection when setting a cookie with' +
+      ' no name and "=" in value (via options)');
 
   const actual2 =
         (await cookieStore.getAll('')).map(({ value }) => value).join(';');
@@ -30,7 +38,7 @@ cookie_test(async t => {
   eventPromise = observeNextCookieChangeEvent();
   await cookieStore.delete('');
   await verifyCookieChangeEvent(
-    eventPromise, {deleted: [{name: '', value: ''}]},
+    eventPromise, {deleted: [{name: ''}]},
     'Observed no-name deletion');
 
   assert_equals(
