@@ -469,6 +469,15 @@ function generateRequestDeviceArgsWithServices(services = ['heart_rate']) {
   }];
 }
 
+// Simulates the |device| disconnecting from central. |device| and
+// |fake_peripheral| must represent the same Bluetooth device.
+function simulateDeviceDisconnect(device, fake_peripheral) {
+  return Promise.all([
+    eventPromise(device, 'gattserverdisconnected'),
+    fake_peripheral.simulateGATTDisconnection(),
+  ]);
+}
+
 // Simulates a pre-connected device with |address|, |name| and
 // |knownServiceUUIDs|.
 function setUpPreconnectedDevice({
